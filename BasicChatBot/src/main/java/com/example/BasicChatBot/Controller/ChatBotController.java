@@ -2,15 +2,17 @@ package com.example.BasicChatBot.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import com.example.BasicChatBot.Service.ChatService;
 
 @RestController
 public class ChatBotController{
 
-    @Autowired
-    ChatService chatService;
+   
+    private final ChatService chatService;
 
-    ChatBotController(ChatService chatService){
+     @Autowired
+    public ChatBotController(ChatService chatService){
         this.chatService=chatService;
     }
     @GetMapping("/chat")
