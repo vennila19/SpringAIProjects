@@ -1,15 +1,15 @@
 package com.example.BasicChatBot.Service;
-import com.example.BasicChatBot.client.ChatClient;
+import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 
 
-
 @Service
-class ChatService{
- 
+public class ChatService{
+
+    @Autowired    
     ChatClient chatClient;
 
-    ChatService(ChatClient chatClient){
+    public ChatService(ChatClient chatClient){
     this.chatClient=chatClient;
     }
 

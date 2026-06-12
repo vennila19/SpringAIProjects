@@ -1,12 +1,14 @@
+package com.example.BasicChatBot.Configuration;
+
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-Class AiConfig{
+class AiConfig{
 
     @Bean
-    ChatClient chatClient(chatClient.Builder builder){
+    ChatClient chatClient(ChatClient.Builder builder){
         return builder.build();
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RestController
 public class ChatBotController{
 
+    @Autowired
     ChatService chatService;
 
     ChatBotController(ChatService chatService){
@@ -14,7 +15,7 @@ public class ChatBotController{
     }
     @GetMapping("/chat")
     public String chat(@RequestParam String question) {
-        rerurn chatService.ask(question);
+        return chatService.ask(question);
        // return "Welcome to Chatbot " + question;
     }
 
