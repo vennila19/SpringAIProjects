@@ -1,0 +1,17 @@
+package com.example.BasicChatBot.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class ChatBotController{
+
+   @GetMapping("/")
+   public String chat(){
+        return "welcome to chatBot";
+    }
+
+    @GetMapping("/")
+    public String home() {
+        return "hello";
+    }
+}
