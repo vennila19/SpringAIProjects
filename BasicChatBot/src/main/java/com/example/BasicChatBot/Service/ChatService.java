@@ -1,5 +1,8 @@
 package com.example.BasicChatBot.Service;
 import com.example.BasicChatBot.client.ChatClient;
+import org.springframework.stereotype.Service;
+
+
 
 @Service
 class ChatService{
