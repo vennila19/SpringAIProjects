@@ -8,13 +8,14 @@ import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TextSplitter;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Component;
 
 
 
 
 @Component
-@RequiredArgsConstructor
 public class DocumentIngestionRunner implements CommandLineRunner {
 
     private final VectorStore vectorStore;
@@ -36,7 +37,7 @@ public class DocumentIngestionRunner implements CommandLineRunner {
 			TextSplitter splitter = new TokenTextSplitter();
 
             List<Document> documents = splitter.apply(
-            List.of(new Document(text)));
+                 List.of(new Document(text)));
             
             vectorStore.add(documents);	
             

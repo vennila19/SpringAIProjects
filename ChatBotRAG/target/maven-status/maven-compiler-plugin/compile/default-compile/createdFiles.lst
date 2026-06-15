@@ -1,0 +1,3 @@
+com/example/ChatBotRAG/ChatBotRagApplication.class
+com/example/ChatBotRAG/Configuration/AiConfig.class
+com/example/ChatBotRAG/RAG/ingestion/DocumentIngestionRunner.class
