@@ -1,4 +1,4 @@
-package com.example.ChatBotRAG.RAG.ingestion;
+package com.example.chatbotrag.rag.ingestion;
 
 import java.util.List;
 import java.util.stream.Collectors;

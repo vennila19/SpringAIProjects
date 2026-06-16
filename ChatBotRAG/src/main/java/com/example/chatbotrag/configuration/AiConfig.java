@@ -1,4 +1,4 @@
-package com.example.ChatBotRAG.Configuration;
+package com.example.chatbotrag.configuration;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
