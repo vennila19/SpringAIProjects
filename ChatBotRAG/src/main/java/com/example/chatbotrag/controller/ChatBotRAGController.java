@@ -4,12 +4,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.example.chatbotrag.service.ChatBotRAGService;
+import org.springframework.web.bind.annotation.PostMapping; 
+import com.example.chatbotrag.service.DataIngestionService; 
+import java.io.IOException; 
 
 @RequestMapping("/chat")
 @RestController
 public class ChatBotRAGController{
 
     private final ChatBotRAGService service;
+    private final DataIngestionService ingestionService;
+
     public ChatBotRAGController(ChatBotRAGService service){
         this.service=service;
     }
