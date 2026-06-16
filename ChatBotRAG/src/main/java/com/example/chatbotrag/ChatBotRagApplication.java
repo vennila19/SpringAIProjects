@@ -3,7 +3,7 @@ package com.example.chatbotrag;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication(scanBasePackages = "com.example.chatbotrag")
+@SpringBootApplication
 public class ChatBotRagApplication {
 
 	public static void main(String[] args) {

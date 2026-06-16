@@ -1,9 +1,7 @@
 package com.example.chatbotrag.rag.ingestion;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.transformer.splitter.TextSplitter;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
@@ -11,9 +9,11 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-
-
-
+import java.util.Map;
+import java.io.InputStream;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.springframework.ai.vectorstore.SearchRequest;
+import org.springframework.ai.vectorstore.filter.Filter;
 
 @Component
 public class DocumentIngestionRunner implements CommandLineRunner {
@@ -26,20 +26,36 @@ public class DocumentIngestionRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        try (var doc = new XWPFDocument(
-                new ClassPathResource("docs/Car_loan.docx").getInputStream())) {
+        String fileName="docs/Car_loan.docx";
 
-            String text = doc.getParagraphs().stream()
-                    .map(XWPFParagraph::getText)
-                    .filter(s -> !s.isBlank())
-                    .collect(Collectors.joining("\n"));
+        // 1. Check if the file has already been ingested
+        if (isFileAlreadyIngested(fileName)) {
+            System.out.println("Skipping ingestion: File '" + fileName + "' already exists in the VectorStore.");
+            return;
+        }
+        
+        System.out.println("File '" + fileName + "' not found in VectorStore. Starting ingestion...");
+        try (InputStream is = new ClassPathResource(fileName).getInputStream();
+             XWPFDocument doc = new XWPFDocument(is);
+             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
-			TextSplitter splitter = new TokenTextSplitter();
+            // 2. Extract ALL text (including tables, lists, and headers)
+            String text = extractor.getText();
 
-            List<Document> documents = splitter.apply(
-                 List.of(new Document(text)));
-            
-            vectorStore.add(documents);	
+            if (text == null || text.isBlank()) {
+                System.out.println("Warning: Extracted text from " + fileName + " is empty. Skipping ingestion.");
+                return;
+            }
+
+            // 3. Wrap text and include critical file metadata 
+            Document rawDocument = new Document(text, Map.of("source", fileName));
+
+			// 4. Chunk text cleanly using the token text splitter
+            TextSplitter splitter = new TokenTextSplitter();
+            List<Document> documents = splitter.apply(List.of(rawDocument));
+
+           // 5. Ingest chunks into the VectorStore
+            vectorStore.add(documents);
             
             System.out.println(
                     "Successfully loaded "
@@ -48,9 +64,40 @@ public class DocumentIngestionRunner implements CommandLineRunner {
                 		
             
         } catch (Exception e) {
+            System.err.println("Failed to ingest document: " + e.getMessage());
              e.printStackTrace();
         }
     }
+
+    /**
+     * Helper method that queries the VectorStore using a Metadata Filter Expression
+     */
+    private boolean isFileAlreadyIngested(String fileName) {
+        try {
+            // Build a filter: source == 'docs/Car_loan.docx'
+            Filter.Expression filterExpression = new Filter.Builder()
+                    .eq("source", fileName)
+                    .build();
+
+            // Request a top-1 similarity match using the filter
+            SearchRequest searchRequest = SearchRequest.builder()
+                    .query("car loan") // Generic query text (required by the interface)
+                    .topK(1)
+                    .filterExpression(filterExpression)
+                    .build();
+
+            List<Document> existingDocs = vectorStore.similaritySearch(searchRequest);
+
+            // If the list is not empty, the file chunks already exist in PGVector
+            return existingDocs != null && !existingDocs.isEmpty();
+            
+        } catch (Exception e) {
+            System.err.println("Could not verify file existence in VectorStore: " + e.getMessage());
+            // Safe fallback: assume it doesn't exist so application flow doesn't crash completely
+            return false; 
+        }
+    }
+
 }
 
 
@@ -68,7 +115,7 @@ As per code
 
 CommandLineRunner.run() executes.
 Reads src/main/resources/docs/Car_loan.docx.
-Extracts paragraph text.
+Extracts text, headers, and tables.
 Uses TokenTextSplitter to chunk the content.
 Creates Spring AI Document objects.
 Generates embeddings through the configured VectorStore.
