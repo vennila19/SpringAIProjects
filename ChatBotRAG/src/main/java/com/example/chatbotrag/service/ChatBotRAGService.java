@@ -2,8 +2,7 @@ package com.example.chatbotrag.service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.ai.chat.client.advisor.QuestionAnswerAdvisor;
-
+import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvisor;
 
 @Service
 public class ChatBotRAGService{
