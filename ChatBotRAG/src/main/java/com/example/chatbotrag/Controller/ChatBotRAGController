@@ -18,6 +18,10 @@ public class ChatBotRAGController{
         return service.ask(message);
     }
 
+    @GetMapping("/ping")
+    public String ping() {
+        return "pong";
+    }
 }
 // Moving the controller here guarantees Spring Boot instantiates it
 @RestController
