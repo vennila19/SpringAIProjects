@@ -1,9 +1,9 @@
-package com.example.chatBotRAG.Controller;
+package com.example.chatbotrag.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
-import com.example.chatBotRAG.Service.ChatBotRAGService;
+import com.example.chatbotrag.Service.ChatBotRAGService;
 
 @RestController
 @RequestMapping("/chat")

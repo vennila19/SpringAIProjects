@@ -1,4 +1,4 @@
-package com.example.chatBotRAG;
+package com.example.chatbotrag;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.SpringApplication;
 
