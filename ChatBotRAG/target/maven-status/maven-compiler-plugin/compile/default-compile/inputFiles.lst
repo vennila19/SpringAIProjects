@@ -1,3 +1,4 @@
 /workspaces/SpringAIProjects/ChatBotRAG/src/main/java/com/example/chatbotrag/ChatBotRagApplication.java
-/workspaces/SpringAIProjects/ChatBotRAG/src/main/java/com/example/chatbotrag/configuration/AiConfig.java
+/workspaces/SpringAIProjects/ChatBotRAG/src/main/java/com/example/chatbotrag/controller/ChatBotRAGController.java
 /workspaces/SpringAIProjects/ChatBotRAG/src/main/java/com/example/chatbotrag/rag/ingestion/DocumentIngestionRunner.java
+/workspaces/SpringAIProjects/ChatBotRAG/src/main/java/com/example/chatbotrag/service/ChatBotRAGService.java

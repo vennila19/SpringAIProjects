@@ -22,4 +22,18 @@ public class ChatBotRAGController{
     public String ping() {
         return "pong";
     }
+
+    /**
+     * Endpoint to trigger document reading, chunking, and vector storage.
+     * URL: POST http://localhost:8080/chat/ingest?filePath=/path/to/your/file.txt
+     */
+    @PostMapping("/ingest")
+    public String ingestData(@RequestParam String filePath) {
+        try {
+            ingestionService.ingestTextFile(filePath);
+            return "Ingestion successful for file: " + filePath;
+        } catch (IOException e) {
+            return "Failed to read or ingest file: " + e.getMessage();
+        }
+    }
 }
