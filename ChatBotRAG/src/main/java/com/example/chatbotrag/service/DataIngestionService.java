@@ -19,9 +19,6 @@ public class DataIngestionService {
     @Value("${app.rag.chunk-size}")
     private int chunkSize;
 
-    @Value("${app.rag.chunk-overlap}")
-    private int chunkOverlap;
-
     public DataIngestionService(VectorStore vectorStore) {
         this.vectorStore = vectorStore;
     }
@@ -37,13 +34,15 @@ public class DataIngestionService {
         Document rawDocument = new Document(content);
 
         // 3. Initialize the Splitter using your custom properties
-        TokenTextSplitter splitter = new TokenTextSplitter(chunkSize, chunkOverlap, 1, 10000, true);
+        TokenTextSplitter splitter = TokenTextSplitter.builder()
+                                                      .withChunkSize(chunkSize)
+                                                      .build();
 
         // 4. Fragment the document into structured chunks
         List<Document> chunks = splitter.split(List.of(rawDocument));
 
         // 5. Send chunks to VectorStore (Automatically creates embeddings via Ollama and saves to Postgres)
-        vectorStore.accept(chunks);
+        vectorStore.add(chunks);
         
         System.out.println("✅ Successfully ingested " + chunks.size() + " document chunks into PGVector!");
     }

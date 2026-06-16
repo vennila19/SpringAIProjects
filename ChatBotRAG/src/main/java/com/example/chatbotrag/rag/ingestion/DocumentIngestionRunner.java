@@ -1,45 +1,44 @@
-/* package com.example.chatbotrag.rag.ingestion;
+package com.example.chatbotrag.rag.ingestion;
 
+import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.ai.document.Document;
-import org.springframework.ai.transformer.splitter.TextSplitter;
 import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
-import java.util.Map;
-import java.io.InputStream;
-import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
-import org.springframework.ai.vectorstore.SearchRequest;
-import org.springframework.ai.vectorstore.filter.Filter;
 
 @Component
 public class DocumentIngestionRunner implements CommandLineRunner {
 
     private final VectorStore vectorStore;
 
-    public DocumentIngestionRunner(VectorStore vectorStore){
-        this.vectorStore=vectorStore;
+    public DocumentIngestionRunner(VectorStore vectorStore) {
+        this.vectorStore = vectorStore;
     }
 
     @Override
     public void run(String... args) {
-        String fileName="docs/Car_loan.docx";
+        String fileName = "docs/Car_loan.docx";
 
-        // 1. Check if the file has already been ingested
         if (isFileAlreadyIngested(fileName)) {
             System.out.println("Skipping ingestion: File '" + fileName + "' already exists in the VectorStore.");
             return;
         }
-        
+
         System.out.println("File '" + fileName + "' not found in VectorStore. Starting ingestion...");
+
         try (InputStream is = new ClassPathResource(fileName).getInputStream();
              XWPFDocument doc = new XWPFDocument(is);
              XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
-            // 2. Extract ALL text (including tables, lists, and headers)
             String text = extractor.getText();
 
             if (text == null || text.isBlank()) {
@@ -47,57 +46,41 @@ public class DocumentIngestionRunner implements CommandLineRunner {
                 return;
             }
 
-            // 3. Wrap text and include critical file metadata 
             Document rawDocument = new Document(text, Map.of("source", fileName));
 
-			// 4. Chunk text cleanly using the token text splitter
-            TextSplitter splitter = new TokenTextSplitter();
+            TokenTextSplitter splitter = TokenTextSplitter.builder().build();
             List<Document> documents = splitter.apply(List.of(rawDocument));
 
-           // 5. Ingest chunks into the VectorStore
             vectorStore.add(documents);
-            
-            System.out.println(
-                    "Successfully loaded "
-                    + documents.size()
-                    + " chunks into VectorStore");	
-                		
-            
+
+            System.out.println("Successfully loaded " + documents.size() + " chunks into VectorStore");
+
         } catch (Exception e) {
             System.err.println("Failed to ingest document: " + e.getMessage());
-             e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
-   private boolean isFileAlreadyIngested(String fileName) {
+    private boolean isFileAlreadyIngested(String fileName) {
         try {
-            // Build a filter: source == 'docs/Car_loan.docx'
-            Filter.Expression filterExpression = new Filter.Builder()
-                    .eq("source", fileName)
-                    .build();
+            FilterExpressionBuilder fb = new FilterExpressionBuilder();
+            Filter.Expression filterExpression = fb.eq("source", fileName);
 
-            // Request a top-1 similarity match using the filter
             SearchRequest searchRequest = SearchRequest.builder()
-                    .query("car loan") // Generic query text (required by the interface)
+                    .query("car loan")
                     .topK(1)
                     .filterExpression(filterExpression)
                     .build();
 
             List<Document> existingDocs = vectorStore.similaritySearch(searchRequest);
-
-            // If the list is not empty, the file chunks already exist in PGVector
             return existingDocs != null && !existingDocs.isEmpty();
-            
+
         } catch (Exception e) {
             System.err.println("Could not verify file existence in VectorStore: " + e.getMessage());
-            // Safe fallback: assume it doesn't exist so application flow doesn't crash completely
-            return false; 
+            return false;
         }
     }
-
-}*/
-
-
+}
 
 /*If in your actual IDE code there is no extra ) and it compiles successfully, then your actual code is fine and the issue is only in what was pasted into the chat. The rest of the logic looks correct:
 
@@ -119,39 +102,3 @@ Creates Spring AI Document objects.
 Generates embeddings through the configured VectorStore.
 Stores them in PGVector.
 */
-
-package com.example.chatbotrag.rag.ingestion;
-
-import org.springframework.ai.document.Document;
-import org.springframework.ai.transformer.splitter.TokenTextSplitter;
-import org.springframework.ai.vectorstore.VectorStore;
-import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.stereotype.Component;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-
-@Component
-public class DocumentIngestionRunner implements CommandLineRunner {
-
-    private final VectorStore vectorStore;
-
-    public DocumentIngestionRunner(VectorStore vectorStore) {
-        this.vectorStore = vectorStore;
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        // Fix 1: Use the fluid modern builder API for TokenTextSplitter
-        TokenTextSplitter splitter = TokenTextSplitter.builder()
-                .withChunkSize(800)
-                .build();
-
-        // Fix 2: Proper metadata filtering approach using the correct DSL builder
-        FilterExpressionBuilder filterBuilder = new FilterExpressionBuilder();
-        
-        System.out.println("✅ DocumentIngestionRunner initialized successfully.");
-    }
-}

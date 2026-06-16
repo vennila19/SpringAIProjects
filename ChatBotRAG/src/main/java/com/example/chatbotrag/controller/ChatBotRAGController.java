@@ -15,9 +15,12 @@ public class ChatBotRAGController{
     private final ChatBotRAGService service;
     private final DataIngestionService ingestionService;
 
-    public ChatBotRAGController(ChatBotRAGService service){
-        this.service=service;
+    public ChatBotRAGController(ChatBotRAGService service,
+                                 DataIngestionService ingestionService) {
+        this.service = service;
+        this.ingestionService = ingestionService;
     }
+
     @GetMapping("/ask")
     public String ask(@RequestParam String message){
         return service.ask(message);

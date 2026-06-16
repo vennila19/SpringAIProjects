@@ -8,14 +8,14 @@ import org.springframework.ai.chat.client.advisor.vectorstore.QuestionAnswerAdvi
 public class ChatBotRAGService{
 
  private final ChatClient chatClient;
- private final VectorStore vectorStore;
+
 
  public ChatBotRAGService(ChatClient.Builder builder,VectorStore vectorStore){
 
     this.chatClient=builder.
-                    defaultAdvisors(new QuestionAnswerAdvisor(vectorStore)).
+                    defaultAdvisors(QuestionAnswerAdvisor.builder(vectorStore).build()).
                     build();
-    this.vectorStore=vectorStore;
+   // this.vectorStore=vectorStore;
  }
 
  public String ask(String question){
