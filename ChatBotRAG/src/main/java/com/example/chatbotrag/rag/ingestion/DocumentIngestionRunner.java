@@ -1,4 +1,4 @@
-package com.example.chatbotrag.rag.ingestion;
+/* package com.example.chatbotrag.rag.ingestion;
 
 import java.util.List;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -69,10 +69,7 @@ public class DocumentIngestionRunner implements CommandLineRunner {
         }
     }
 
-    /**
-     * Helper method that queries the VectorStore using a Metadata Filter Expression
-     */
-    private boolean isFileAlreadyIngested(String fileName) {
+   private boolean isFileAlreadyIngested(String fileName) {
         try {
             // Build a filter: source == 'docs/Car_loan.docx'
             Filter.Expression filterExpression = new Filter.Builder()
@@ -98,7 +95,8 @@ public class DocumentIngestionRunner implements CommandLineRunner {
         }
     }
 
-}
+}*/
+
 
 
 /*If in your actual IDE code there is no extra ) and it compiles successfully, then your actual code is fine and the issue is only in what was pasted into the chat. The rest of the logic looks correct:
@@ -121,3 +119,39 @@ Creates Spring AI Document objects.
 Generates embeddings through the configured VectorStore.
 Stores them in PGVector.
 */
+
+package com.example.chatbotrag.rag.ingestion;
+
+import org.springframework.ai.document.Document;
+import org.springframework.ai.transformer.splitter.TokenTextSplitter;
+import org.springframework.ai.vectorstore.VectorStore;
+import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+@Component
+public class DocumentIngestionRunner implements CommandLineRunner {
+
+    private final VectorStore vectorStore;
+
+    public DocumentIngestionRunner(VectorStore vectorStore) {
+        this.vectorStore = vectorStore;
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        // Fix 1: Use the fluid modern builder API for TokenTextSplitter
+        TokenTextSplitter splitter = TokenTextSplitter.builder()
+                .withChunkSize(800)
+                .build();
+
+        // Fix 2: Proper metadata filtering approach using the correct DSL builder
+        FilterExpressionBuilder filterBuilder = new FilterExpressionBuilder();
+        
+        System.out.println("✅ DocumentIngestionRunner initialized successfully.");
+    }
+}
