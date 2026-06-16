@@ -1,4 +1,4 @@
-package com.example.ChatBotRAG.Service;
+package com.example.chatBotRAG.Service;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
 import org.springframework.ai.vectorstore.VectorStore;
