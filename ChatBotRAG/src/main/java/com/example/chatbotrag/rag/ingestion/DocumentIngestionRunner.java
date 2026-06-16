@@ -65,7 +65,8 @@ public class DocumentIngestionRunner implements CommandLineRunner {
     private boolean isFileAlreadyIngested(String fileName) {
         try {
             FilterExpressionBuilder fb = new FilterExpressionBuilder();
-            Filter.Expression filterExpression = fb.eq("source", fileName);
+            Filter.Expression filterExpression = fb.eq("source", fileName).build();
+
 
             SearchRequest searchRequest = SearchRequest.builder()
                     .query("car loan")
