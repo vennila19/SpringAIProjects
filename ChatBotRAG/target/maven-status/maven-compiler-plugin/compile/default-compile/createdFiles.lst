@@ -1,4 +1,5 @@
 com/example/chatbotrag/controller/ChatBotRAGController.class
+com/example/chatbotrag/rag/ingestion/DocumentIngestionRunner.class
+com/example/chatbotrag/service/ChatBotRAGService.class
 com/example/chatbotrag/service/DataIngestionService.class
 com/example/chatbotrag/ChatBotRagApplication.class
-com/example/chatbotrag/service/ChatBotRAGService.class
